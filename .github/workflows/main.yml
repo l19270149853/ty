@@ -2,42 +2,44 @@ name: Live Source Updater
 
 on:
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '0 0 * * *' # 每天0点执行
   workflow_dispatch:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    
+    runs-on: ubuntu - latest
+    timeout - minutes: 20
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0
-        ref: main  # 明确指定分支
+        fetch - depth: 0
+        ref: main # 明确指定分支
 
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup - python@v4
       with:
-        python-version: '3.10'
-        
+        python - version: '3.10'
+
     - name: Install Dependencies
       run: pip install requests
-      
+
     - name: Run Updater
       run: python main.py
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
     - name: Commit and Push
       run: |
-        if git diff-index --quiet HEAD --; then
+        if git diff - index --quiet HEAD --; then
           echo "🔄 无变更需要提交"
         else
           git config --global user.name "l19270149853"
           git config --global user.email "362213335lkh@gmail.com"
-          git add .
-          git commit -m "自动更新直播源 $(date +'%Y-%m-%d %H:%M')"
-          git push origin main
+          git add.
+          git commit - m "自动更新直播源 $(date +'%Y-%m-%d %H:%M')"
+          git push origin main - force
         fi
+
+
